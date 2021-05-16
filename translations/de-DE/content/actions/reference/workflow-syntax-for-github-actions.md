@@ -1,7 +1,7 @@
 ---
 title: Workflow-Syntax für GitHub Actions
 shortTitle: Syntax für Workflows
-intro: Ein Workflow ist ein konfigurierbarer automatisierter Prozess, der aus einem oder mehreren Jobs besteht. Du musst eine YAML-Datei erstellen, um Deine Workflow-Konfiguration zu definieren.
+intro: 'Ein Workflow ist ein konfigurierbarer automatisierter Prozess, der aus einem oder mehreren Jobs besteht. Du musst eine YAML-Datei erstellen, um Deine Workflow-Konfiguration zu definieren.'
 product: '{% data reusables.gated-features.actions %}'
 redirect_from:
   - /articles/workflow-syntax-for-github-actions
@@ -10,24 +10,26 @@ redirect_from:
 versions:
   free-pro-team: '*'
   enterprise-server: '>=2.22'
+  github-ae: '*'
 ---
 
 {% data reusables.actions.enterprise-beta %}
 {% data reusables.actions.enterprise-github-hosted-runners %}
+{% data reusables.actions.ae-beta %}
 
 ### Informationen zur YAML-Syntax für Workflows
 
-Workflow-Dateien verwenden die YAML-Syntax und müssen die Dateierweiterung `.yml` oder `.yaml` aufweisen. Wenn Sie bislang noch nicht mit YAML gearbeitet haben, lesen Sie den Artikel „[Learn YAML in five minutes](https://www.codeproject.com/Articles/1214409/Learn-YAML-in-five-minutes)“.
+Workflow-Dateien verwenden die YAML-Syntax und müssen die Dateierweiterung `.yml` oder `.yaml` aufweisen. {% data reusables.actions.learn-more-about-yaml %}
 
 Workflow-Dateien müssen im Verzeichnis `.github/workflows` im Repository gespeichert werden.
 
 ### `name`
 
-Name des Workflows. {% data variables.product.prodname_dotcom %} zeigt die Namen der Workflows auf der Repository-Seite der Aktionen an. Wenn Du `name`weglässt, setzt {% data variables.product.prodname_dotcom %} den Pfad der Workflow-Datei relativ zum Stammverzeichnis des Repositorys.
+Name des Workflows. {% data variables.product.prodname_dotcom %} zeigt die Namen Deiner Workflows auf der Aktionen-Seite Deines Repositorys an. Wenn Du `name`weglässt, setzt {% data variables.product.prodname_dotcom %} den Pfad der Workflow-Datei relativ zum Stammverzeichnis des Repositorys.
 
 ### `on`
 
-**Erforderlich** Name des Ereignisses auf {% data variables.product.prodname_dotcom %}, das den Workflow auslöst. Sie können einen `string` für ein einzelnes Ereignis, ein `array` mit Ereignissen, ein `array` mit Ereignis-`types` oder eine Ereigniskonfigurations-`map` festlegen, mit der ein Workflow geplant oder die Ausführung eines Workflows auf bestimmte Dateien, Tags oder Branch-Änderungen beschränkt wird. Eine Liste der verfügbaren Ereignisse finden Sie unter „[Ereignisse, die Workflows auslösen](/articles/events-that-trigger-workflows)“.
+**Required**. The name of the {% data variables.product.prodname_dotcom %} event that triggers the workflow. Sie können einen `string` für ein einzelnes Ereignis, ein `array` mit Ereignissen, ein `array` mit Ereignis-`types` oder eine Ereigniskonfigurations-`map` festlegen, mit der ein Workflow geplant oder die Ausführung eines Workflows auf bestimmte Dateien, Tags oder Branch-Änderungen beschränkt wird. Eine Liste der verfügbaren Ereignisse finden Sie unter „[Ereignisse, die Workflows auslösen](/articles/events-that-trigger-workflows)“.
 
 {% data reusables.github-actions.actions-on-examples %}
 
@@ -120,7 +122,7 @@ Unter den Schlüsselwörtern `paths-ignore` und `paths` kannst Du Glob-Muster nu
 
 #### Beispiel zum Ignorieren von Pfaden
 
-Immer wenn ein Pfadname zu einem Muster in `paths-ignore` passt, wird der Workflow nicht ausgeführt. {% data variables.product.prodname_dotcom %} wertet die in `paths-ignore` definierten Muster anhand des Pfadnamens aus. Ein Workflow mit dem nachfolgenden Pfadfilter wird nur bei `push`-Ereignissen ausgeführt, bei denen sich mindestens eine Datei außerhalb des Verzeichnisses `docs` im Root des Repositorys befindet.
+When all the path names match patterns in `paths-ignore`, the workflow will not run. {% data variables.product.prodname_dotcom %} wertet die in `paths-ignore` definierten Muster anhand des Pfadnamens aus. Ein Workflow mit dem nachfolgenden Pfadfilter wird nur bei `push`-Ereignissen ausgeführt, bei denen sich mindestens eine Datei außerhalb des Verzeichnisses `docs` im Root des Repositorys befindet.
 
 ```yaml
 on:
@@ -187,7 +189,7 @@ Weitere Informationen zur Cron-Syntax findest Du unter „[Ereignisse, die Workf
 
 ### `env`
 
-Eine `map` mit Umgebungsvariablen, die für alle Jobs und Schritte im Workflow verfügbar sind. Darüber hinaus kannst Du auch Umgebungsvariablen festlegen, die ausschließlich für einen Job oder Schritt bereitstehen. For more information, see [`jobs.<job_id>.env`](#jobsjob_idenv) and [`jobs.<job_id>.steps[*].env`](#jobsjob_idstepsenv).
+A `map` of environment variables that are available to the steps of all jobs in the workflow. You can also set environment variables that are only available to the steps of a single job or to a single step. For more information, see [`jobs.<job_id>.env`](#jobsjob_idenv) and [`jobs.<job_id>.steps[*].env`](#jobsjob_idstepsenv).
 
 {% data reusables.repositories.actions-env-var-note %}
 
@@ -221,7 +223,7 @@ defaults:
 
 ### `jobs`
 
-Ein Workflow-Lauf besteht aus mindestens einem Auftrag. Die Aufträge werden standardmäßig parallel ausgeführt. Sollen Aufträge sequenziell ausgeführt werden, können Sie mit dem Stichwort `jobs.<job_id>.needs` eine Abhängigkeit von anderen Aufträgen definieren.
+Ein Workflow-Lauf besteht aus mindestens einem Job. Die Aufträge werden standardmäßig parallel ausgeführt. Sollen Jobs sequenziell ausgeführt werden, kannst Du mit dem Schlüsselwort `jobs.<job_id>.needs` eine Abhängigkeit von anderen Jobs definieren.
 
 Each job runs in a runner environment specified by `runs-on`.
 
@@ -286,8 +288,22 @@ In this example, `job3` uses the `always()` conditional expression so that it al
 
 ### `jobs.<job_id>.runs-on`
 
-**Erforderlich** Typ der Maschine, auf der der Job ausgeführt wird. Die Maschine kann entweder ein {% data variables.product.prodname_dotcom %}-gehosteter oder ein selbst-gehosteter Runner sein.
+**Required**. The type of machine to run the job on. Die Maschine kann entweder ein {% data variables.product.prodname_dotcom %}-gehosteter oder ein selbst-gehosteter Runner sein.
 
+{% if currentVersion == "github-ae@latest" %}
+#### {% data variables.actions.hosted_runner %}s
+
+If you use an {% data variables.actions.hosted_runner %}, each job runs in a fresh instance of a virtual environment specified by `runs-on`.
+
+##### Beispiel
+
+```yaml
+runs-on: [AE-runner-for-CI]
+```
+
+For more information, see "[About {% data variables.actions.hosted_runner %}s](/actions/using-github-hosted-runners/about-ae-hosted-runners)."
+
+{% else %}
 {% data reusables.actions.enterprise-github-hosted-runners %}
 
 #### {% data variables.product.prodname_dotcom %}-gehostete Runner
@@ -298,7 +314,7 @@ Verfügbare Arten von {% data variables.product.prodname_dotcom %}-gehostete Run
 
 {% data reusables.github-actions.supported-github-runners %}
 
-{% data reusables.github-actions.ubuntu-runner-preview %}
+{% data reusables.github-actions.macos-runner-preview %}
 
 ##### Beispiel
 
@@ -307,8 +323,11 @@ Runs-on: ubuntu-latest
 ```
 
 Weitere Informationen findest Du unter "[Virtuelle Umgebungen für {% data variables.product.prodname_dotcom %}-gehostete Runner](/github/automating-your-workflow-with-github-actions/virtual-environments-for-github-hosted-runners)."
+{% endif %}
 
 #### Selbst-gehostete Runner
+
+{% data reusables.actions.ae-self-hosted-runners-notice %}
 
 {% data reusables.github-actions.self-hosted-runner-labels-runs-on %}
 
@@ -320,7 +339,7 @@ runs-on: [self-hosted, linux]
 
 Weitere Informationen findest Du unter „[Informationen zu selbst-gehosteten Runnern](/github/automating-your-workflow-with-github-actions/about-self-hosted-runners)“ und „[Selbst-gehostete Runner in einem Workflow verwenden](/github/automating-your-workflow-with-github-actions/using-self-hosted-runners-in-a-workflow)“.
 
-{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@3.0" %}
+{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@3.0" or currentVersion == "github-ae@latest" %}
 ### `jobs.<job_id>.environment`
 
 The environment that the job references. All environment protection rules must pass before a job referencing the environment is sent to a runner. For more information, see "[Environments](/actions/reference/environments)."
@@ -518,7 +537,7 @@ Aktionen sind entweder JavaScript-Dateien oder Docker-Container. Bei Docker-Cont
 ```yaml
 steps:    
   # Reference a specific commit
-  - uses: actions/setup-node@74bc508
+  - uses: actions/setup-node@c46424eee26de4078d34105d3de3cc4992202b1e
   # Reference the major version of a release
   - uses: actions/setup-node@v1
   # Reference a minor version of a release
@@ -589,11 +608,26 @@ jobs:
         verwendet: docker://alpine:3.8
 ```
 
-#### Beispiel mit einer Aktion in einer öffentlichen Docker Registry
+{% if currentVersion == "free-pro-team@latest" %}
+##### Example using the {% data variables.product.prodname_github_container_registry %}
 
 `docker://{host}/{image}:{tag}`
 
-Ein Docker-Image in einer öffentlichen Registry.
+A Docker image in the {% data variables.product.prodname_github_container_registry %}.
+
+```yaml
+jobs:
+  my_first_job:
+    steps:
+      - name: My first step
+        uses: docker://ghcr.io/OWNER/IMAGE_NAME
+```
+{% endif %}
+##### Beispiel mit einer Aktion in einer öffentlichen Docker Registry
+
+`docker://{host}/{image}:{tag}`
+
+Ein Docker-Image in einer öffentlichen Registry. This example uses the Google Container Registry at `gcr.io`.
 
 ```yaml
 jobs:
@@ -602,6 +636,27 @@ jobs:
       - name: My first step
         uses: docker://gcr.io/cloud-builders/gradle
 ```
+
+#### Example using action inside a different private repository than the workflow
+
+Your workflow must checkout the private repository and reference the action locally.
+
+{% raw %}
+```yaml
+jobs:
+  my_first_job:
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          repository: octocat/my-private-repo
+          ref: v1.0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./.github/actions/my-private-repo
+      - name: Run my action
+        uses: ./.github/actions/my-private-repo/my-action
+```
+{% endraw %}
 
 ### `jobs.<job_id>.steps[*].run`
 
@@ -639,14 +694,15 @@ Mit dem Schlüsselwort`working-directory` gibst Du das Arbeitsverzeichnis an, in
 
 Du kannst die Einstellungen zur Standard-Shell im Betriebssystem des Läufers mit dem Schlüsselwort `shell` überschreiben. Sie können die integrierten `shell`-Stichwörter verwenden oder eine benutzerdefinierte Reihe von Shell-Optionen definieren.
 
-| Unterstützte Plattform | Parameter `shell` | Beschreibung                                                                                                                                                                                          | Intern ausgeführter Befehl                      |
-| ---------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Alle                   | `bash`            | Die standardmäßige Shell für alle Plattformen außer Windows mit einem Fallback zu `sh`. Wenn eine Bash-Shell für Windows angegeben wird, wird die in Git für Windows enthaltene Bash-Shell verwendet. | `bash --noprofile --norc -eo pipefail {0}`      |
-| Alle                   | `pwsh`            | Der PowerShell Core. {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.ps1` an Deinen Skriptnamen an.                                                                              | `pwsh -command ". '{0}'"`                       |
-| Alle                   | `python`          | Führt den Befehl Python aus.                                                                                                                                                                          | `python {0}`                                    |
-| Linux / macOS          | `sh`              | Das Fallback-Verhalten für alle Betriebssystem-Plattformen außer Windows, falls keine Shell angegeben ist und `bash` nicht im Pfad gefunden wird.                                                     | `sh -e {0}`                                     |
-| Windows                | `cmd`             | {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.cmd` an Deinen Skriptnamen an und ersetzt `{0}`.                                                                                 | `%ComSpec% /D /E:ON /V:OFF /S /C "CALL "{0}""`. |
-| Windows                | `powershell`      | Dies ist die standardmäßig für Windows verwendete Shell. Die Desktop PowerShell. {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.ps1` an Deinen Skriptnamen an.                  | `powershell -command ". '{0}'"`.                |
+| Unterstützte Plattform | Parameter `shell` | Beschreibung                                                                                                                                                                                                                                                                                               | Intern ausgeführter Befehl                      |
+| ---------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Alle                   | `bash`            | Die standardmäßige Shell für alle Plattformen außer Windows mit einem Fallback zu `sh`. Wenn eine Bash-Shell für Windows angegeben wird, wird die in Git für Windows enthaltene Bash-Shell verwendet.                                                                                                      | `bash --noprofile --norc -eo pipefail {0}`      |
+| Alle                   | `pwsh`            | Der PowerShell Core. {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.ps1` an Deinen Skriptnamen an.                                                                                                                                                                                   | `pwsh -command ". '{0}'"`                       |
+| Alle                   | `python`          | Führt den Befehl Python aus.                                                                                                                                                                                                                                                                               | `python {0}`                                    |
+| Linux / macOS          | `sh`              | Das Fallback-Verhalten für alle Betriebssystem-Plattformen außer Windows, falls keine Shell angegeben ist und `bash` nicht im Pfad gefunden wird.                                                                                                                                                          | `sh -e {0}`                                     |
+| Windows                | `cmd`             | {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.cmd` an Deinen Skriptnamen an und ersetzt `{0}`.                                                                                                                                                                                      | `%ComSpec% /D /E:ON /V:OFF /S /C "CALL "{0}""`. |
+| Windows                | `pwsh`            | Dies ist die standardmäßig für Windows verwendete Shell. Der PowerShell Core. {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.ps1` an Deinen Skriptnamen an. If your self-hosted Windows runner does not have _PowerShell Core_ installed, then _PowerShell Desktop_ is used instead. | `pwsh -command ". '{0}'"`.                      |
+| Windows                | `powershell`      | The PowerShell Desktop. {% data variables.product.prodname_dotcom %} hängt die Erweiterung `.ps1` an Deinen Skriptnamen an.                                                                                                                                                                                | `powershell -command ". '{0}'"`.                |
 
 #### Beispiel zur Ausführung eines Skripts mittels Bash
 
@@ -675,6 +731,15 @@ steps:
     shell: pwsh
 ```
 
+#### Example: Using PowerShell Desktop to run a script
+
+```yaml
+steps:
+  - name: Display the path
+    run: echo ${env:PATH}
+    shell: powershell
+```
+
 #### Beispiel zur Ausführung eines Python-Skripts
 
 ```yaml
@@ -690,12 +755,30 @@ steps:
 
 Mit `command […options] {0} [..more_options]` können Sie einen Vorlagen-String für den `shell`-Wert festlegen. {% data variables.product.prodname_dotcom %} interpretiert das erste Wort im String, nach dem ein „Whitespace“ (Zwischenraum-Zeichen) steht, als Befehl, und der Dateiname für das temporäre Skript wird in `{0}` eingefügt.
 
+Ein Beispiel:
+
+```yaml
+steps:
+  - name: Display the environment variables and their values
+    run: |
+      print %ENV
+    shell: perl {0}
+```
+
+The command used, `perl` in this example, must be installed on the runner.
+
+
+{% if currentVersion == "github-ae@latest" %}For instructions on how to make sure your {% data variables.actions.hosted_runner %} has the required software installed, see "[Creating custom images](/actions/using-github-hosted-runners/creating-custom-images)."
+{% else %}
+For information about the software included on GitHub-hosted runners, see "[Specifications for GitHub-hosted runners](/actions/reference/specifications-for-github-hosted-runners#supported-software)."
+{% endif %}
+
 #### Exit-Codes und Voreinstellung für Fehleraktionen
 
 Für integrierte Shell-Schlüsselwörter gelten die folgenden Standards, die durch auf {% data variables.product.prodname_dotcom %} gehostete Runner ausgeführt werden. Beachte diese Richtlinien beim Ausführen von Shell-Skripts.
 
 - `bash`/`sh`:
-  - Fail-Fast-Verhalten mit `set -e o pipefail`: Standard für `bash` und integrierte `shell`. Dies ist außerdem der Standard, wenn Du eine Option für eine Plattform außer Windows angibst.
+  - Fail-fast behavior using `set -eo pipefail`: Default for `bash` and built-in `shell`. Dies ist außerdem der Standard, wenn Du eine Option für eine Plattform außer Windows angibst.
   - Wenn Du auf Fail-Fast verzichtest und stattdessen die volle Kontrolle übernehmen möchtest, stelle einen Vorlagen-String für die Shell-Optionen bereit. Beispiel: `bash {0}`.
   - sh-ähnliche Shells liefern beim Beenden als ihren eigenen Exit-Code den Exit-Code des letzten Befehls, der im Skript ausgeführt wurde. Dies ist auch das Standardverhalten für Aktionen. Der Runner meldet den Status des Schritts gemäß diesem Exit-Code als Fehler/Erfolg.
 
@@ -859,7 +942,9 @@ steps:
 ```
 {% endraw %}
 
-Unterstützte Konfigurationsoptionen für {% data variables.product.prodname_dotcom %}-gehostete Runner findest Du unter „[Virtuelle Umgebungen für {% data variables.product.prodname_dotcom %}-gehostete Runner](/actions/automating-your-workflow-with-github-actions/virtual-environments-for-github-hosted-runners)“.
+{% if currentVersion == "github-ae@latest" %}To find supported configuration options for {% data variables.actions.hosted_runner %}s, see "[Software specifications](/actions/using-github-hosted-runners/about-ae-hosted-runners#software-specifications)."
+{% else %}To find supported configuration options for {% data variables.product.prodname_dotcom %}-hosted runners, see "[Virtual environments for {% data variables.product.prodname_dotcom %}-hosted runners](/actions/automating-your-workflow-with-github-actions/virtual-environments-for-github-hosted-runners)."
+{% endif %}
 
 #### Beispiel mit kombinierten zusätzlichen Werten
 
@@ -1001,7 +1086,7 @@ jobs:
 
 Docker-Image, das beim Ausführen der Aktion als Container herangezogen wird. The value can be the Docker Hub image name or a {% if enterpriseServerVersions contains currentVersion and currentVersion ver_lt "enterprise-server@2.23" %}public{% endif %} registry name.
 
-{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@2.22" %}
+{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@2.22" or currentVersion == "github-ae@latest" %}
 
 ### `jobs.<job_id>.container.credentials`
 
@@ -1085,7 +1170,7 @@ services:
 
 Docker-Image, das beim Ausführen der Aktion als Dienstcontainer herangezogen wird. The value can be the Docker Hub image name or a {% if enterpriseServerVersions contains currentVersion and currentVersion ver_lt "enterprise-server@2.23" %}public{% endif %} registry name.
 
-{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@2.22" %}
+{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@2.22" or currentVersion == "github-ae@latest" %}
 
 ### `jobs.<job_id>.services.<service_id>.credentials`
 
@@ -1149,7 +1234,7 @@ Die Pfad-, Branch- und Tag-Filter können bestimmte Sonderzeichen umfassen.
 - `**`: Steht für kein Zeichen oder mehrere beliebige Zeichen.
 - `?`: Steht für kein Zeichen oder ein einzelnes Zeichen. Zum Beispiel passt `Oktoc?t` auf `Oktocat`.
 - `+`: Matches one or more of the preceding character.
-- `[]` Steht für irgend ein Zeichen, das in den Klammern aufgelistet ist oder das in einen in den Klammern enthalten Bereich fällt. Mögliche Bereiche sind ausschließlich `a-z`, `A-Z` und `0-9`. Zum Beispiel entspricht der Bereich`[0-9a-f]` beliebigen Ziffern oder Kleinbuchstaben. Zum Beispiel passt `[CB]at` sowohl zu `Cat` als auch zu `Bat` und `[1-2]00` passt sowohl zu `100` als auch zu `200`.
+- `[]` Steht für irgend ein Zeichen, das in den Klammern aufgelistet ist oder das in einen in den Klammern enthalten Bereich fällt. Mögliche Bereiche sind ausschließlich `a-z`, `A-Z` und `0-9`. For example, the range`[0-9a-z]` matches any digit or lowercase letter. Zum Beispiel passt `[CB]at` sowohl zu `Cat` als auch zu `Bat` und `[1-2]00` passt sowohl zu `100` als auch zu `200`.
 - `!`: Am Anfang eines Musters stehend negiert es das Muster in sein Gegenteil. Es hat keine besondere Bedeutung, wenn es nicht das erste Zeichen ist.
 
 Die Zeichen `*`, `[` und `!` sind Sonderzeichen in YAML. Wenn ein Muster mit `*`, `[` oder `!` beginnen soll, schließen Sie das Muster in Anführungszeichen ein.
@@ -1167,35 +1252,35 @@ Weitere Informationen zur Syntax für Branch-, Tag- und Pfadfilter finden Sie un
 
 #### Muster für den Abgleich von Branches und Tags
 
-| Muster                                        | Beschreibung                                                                                                                                                                                                  | Beispiele für Übereinstimmungen                                                                    |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `feature/*`                                   | Das Platzhalterzeichen `*` steht für ein beliebiges Zeichen, nicht jedoch für den Schrägstrich (`/`).                                                                                                         | -`feature/my-branch`<br/>-`feature/your-branch`                                              |
-| `feature/**`                                  | Das Platzhalterzeichen `**` steht für ein beliebiges Zeichen, also auch für den Schrägstrich (`/`), in Branch- und Tag-Namen.                                                                                 | -`feature/beta-a/my-branch`<br/>-`feature/your-branch`<br/>-`feature/mona/the/octocat` |
-| -`main`<br/>-`releases/mona-the-octcat` | Abgleich mit dem exakten Branch- oder Tag-Namen.                                                                                                                                                              | -`main`<br/>-`releases/mona-the-octocat`                                                     |
-| `'*'`                                         | Abgleich mit allen Branch- und Tag-Namen, die keinen Schrägstrich (`/`) enthalten. Das Zeichen `*` ist ein Sonderzeichen in YAML. Wenn ein Muster mit `*` beginnen soll, sind Anführungszeichen erforderlich. | -`main`<br/>-`releases`                                                                      |
-| `'**'`                                        | Abgleich mit allen Branch- und Tag-Namen. Dies ist das Standardverhalten, wenn Sie keinen `branches`- oder `tags`-Filter angeben.                                                                             | -`all/the/branches`<br/>-`every/tag`                                                         |
-| `'*feature'`                                  | Das Zeichen `*` ist ein Sonderzeichen in YAML. Wenn ein Muster mit `*` beginnen soll, sind Anführungszeichen erforderlich.                                                                                    | -`mona-feature`<br/>-`feature`<br/>-`ver-10-feature`                                   |
-| `v2*`                                         | Abgleich mit Branch- und Tag-Namen, die mit `v2` beginnen.                                                                                                                                                    | -`v2`<br/>-`v2.0`<br/>-`v2.9`                                                          |
-| `v[12].[0-9]+.[0-9]+`                         | Abgleich mit allen semantischen Versions-Tags mit der Hauptversion 1 oder 2.                                                                                                                                  | -`v1.10.1`<br/>-`v2.0.0`                                                                     |
+| Muster                                                 | Beschreibung                                                                                                                                                                                                  | Beispiele für Übereinstimmungen                                                                                       |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `feature/*`                                            | Das Platzhalterzeichen `*` steht für ein beliebiges Zeichen, nicht jedoch für den Schrägstrich (`/`).                                                                                                         | `feature/my-branch`<br/><br/>`feature/your-branch`                                                        |
+| `feature/**`                                           | Das Platzhalterzeichen `**` steht für ein beliebiges Zeichen, also auch für den Schrägstrich (`/`), in Branch- und Tag-Namen.                                                                                 | `feature/beta-a/my-branch`<br/><br/>`feature/your-branch`<br/><br/>`feature/mona/the/octocat` |
+| `main`<br/><br/>`releases/mona-the-octcat` | Abgleich mit dem exakten Branch- oder Tag-Namen.                                                                                                                                                              | `main`<br/><br/>`releases/mona-the-octocat`                                                               |
+| `'*'`                                                  | Abgleich mit allen Branch- und Tag-Namen, die keinen Schrägstrich (`/`) enthalten. Das Zeichen `*` ist ein Sonderzeichen in YAML. Wenn ein Muster mit `*` beginnen soll, sind Anführungszeichen erforderlich. | `main`<br/><br/>`releases`                                                                                |
+| `'**'`                                                 | Abgleich mit allen Branch- und Tag-Namen. Dies ist das Standardverhalten, wenn Sie keinen `branches`- oder `tags`-Filter angeben.                                                                             | `all/the/branches`<br/><br/>`every/tag`                                                                   |
+| `'*feature'`                                           | Das Zeichen `*` ist ein Sonderzeichen in YAML. Wenn ein Muster mit `*` beginnen soll, sind Anführungszeichen erforderlich.                                                                                    | `mona-feature`<br/><br/>`feature`<br/><br/>`ver-10-feature`                                   |
+| `v2*`                                                  | Abgleich mit Branch- und Tag-Namen, die mit `v2` beginnen.                                                                                                                                                    | `v2`<br/><br/>`v2.0`<br/><br/>`v2.9`                                                          |
+| `v[12].[0-9]+.[0-9]+`                                  | Matches all semantic versioning branches and tags with major version 1 or 2                                                                                                                                   | `v1.10.1`<br/><br/>`v2.0.0`                                                                               |
 
 #### Muster für den Abgleich von Dateinamen
 
 Pfadmuster müssen mit dem gesamten Pfad übereinstimmen und mit dem Root des Repositorys beginnen.
 
-| Muster                                               | Beschreibung der Übereinstimmungen                                                                                                                                                                                                   | Beispiele für Übereinstimmungen                                                               |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| `'*'`                                                | Das Platzhalterzeichen `*` steht für ein beliebiges Zeichen, nicht jedoch für den Schrägstrich (`/`). Das Zeichen `*` ist ein Sonderzeichen in YAML. Wenn ein Muster mit `*` beginnen soll, sind Anführungszeichen erforderlich.     | -`README.md`<br/>-`server.rb`                                                           |
-| `'*.jsx?'`                                           | Das Zeichen `?` steht für null Instanzen oder genau eine Instanz des vorangegangenen Zeichens.                                                                                                                                       | -`page.js`<br/>-`page.jsx`                                                              |
-| `'**'`                                               | Das Platzhalterzeichen `**` steht für ein beliebiges Zeichen, auch für den Schrägstrich (`/`). Dies ist das Standardverhalten, wenn Sie keinen `path`-Filter angeben.                                                                | -`all/the/files.md`                                                                           |
-| `'*.js'`                                             | Das Platzhalterzeichen `*` steht für ein beliebiges Zeichen, nicht jedoch für den Schrägstrich (`/`). Abgleich mit allen `.js`-Dateien im Root des Repositorys.                                                                      | -`app.js`<br/>-`index.js`                                                               |
-| `'**.js'`                                            | Abgleich mit allen `.js`-Dateien im Repository.                                                                                                                                                                                      | -`index.js`<br/>-`js/index.js`<br/>-`src/js/app.js`                               |
-| `docs/*`                                             | Alle Dateien im Root des Verzeichnisses `docs` im Root des Repositorys.                                                                                                                                                              | -`docs/README.md`<br/>-`docs/file.txt`                                                  |
-| `docs/**`                                            | Beliebige Dateien im Verzeichnis `docs` im Root des Repositorys.                                                                                                                                                                     | -`docs/README.md`<br/>-`docs/mona/octocat.txt`                                          |
-| `docs/**/*.md`                                       | Eine Datei mit dem Suffix `.md` an beliebiger Stelle im Verzeichnis `docs`.                                                                                                                                                          | -`docs/README.md`<br/>-`docs/mona/hello-world.md`<br/>-`docs/a/markdown/file.md`  |
-| `'**/docs/**'`                                       | Beliebige Dateien im Verzeichnis `docs` an beliebiger Stelle im Repository.                                                                                                                                                          | -`/docs/hello.md`<br/>-`dir/docs/my-file.txt`<br/>-`space/docs/plan/space.doc`    |
-| `'**/README.md'`                                     | Eine Datei mit dem Namen „README.md“ an beliebiger Stelle im Repository.                                                                                                                                                             | -`README.md`<br/>-`js/README.md`                                                        |
-| `'**/*src/**'`                                       | Eine beliebige Datei in einem Ordner mit dem Suffix `src` an beliebiger Stelle im Repository.                                                                                                                                        | -`a/src/app.js`<br/>-`my-src/code/js/app.js`                                            |
-| `'**/*-post.md'`                                     | Eine Datei mit dem Suffix `-post.md` an beliebiger Stelle im Repository.                                                                                                                                                             | -`my-post.md`<br/>-`path/their-post.md`                                                 |
-| `'**/migrate-*.sql'`                                 | Eine Datei mit dem Präfix `migrate-` und dem Suffix `.sql` an beliebiger Stelle im Repository.                                                                                                                                       | -`migrate-10909.sql`<br/>-`db/migrate-v1.0.sql`<br/>-`db/sept/migrate-v1.sql`     |
-| -`*.md`<br/>-`!README.md`                      | Ein Ausrufezeichen (`!`) vor einem Muster negiert das Muster. Wenn eine Datei sowohl mit einem Muster übereinstimmt als auch mit einem negativen Muster, das später in der Datei definiert ist, wird die Datei nicht berücksichtigt. | -`hello.md`<br/>_Kein Abgleich mit_<br/>-`README.md`<br/>-`docs/hello.md` |
-| -`*.md`<br/>-`!README.md`<br/>-`README*` | Die Muster werden sequenziell geprüft. Wenn ein Muster ein vorangegangenes Muster negiert, werden die Dateipfade wieder berücksichtigt.                                                                                              | -`hello.md`<br/>-`README.md`<br/>-`README.doc`                                    |
+| Muster                                                                  | Beschreibung der Übereinstimmungen                                                                                                                                                                                                   | Beispiele für Übereinstimmungen                                                                                          |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `'*'`                                                                   | Das Platzhalterzeichen `*` steht für ein beliebiges Zeichen, nicht jedoch für den Schrägstrich (`/`). Das Zeichen `*` ist ein Sonderzeichen in YAML. Wenn ein Muster mit `*` beginnen soll, sind Anführungszeichen erforderlich.     | `README.md`<br/><br/>`server.rb`                                                                             |
+| `'*.jsx?'`                                                              | Das Zeichen `?` steht für null Instanzen oder genau eine Instanz des vorangegangenen Zeichens.                                                                                                                                       | `page.js`<br/><br/>`page.jsx`                                                                                |
+| `'**'`                                                                  | Das Platzhalterzeichen `**` steht für ein beliebiges Zeichen, auch für den Schrägstrich (`/`). Dies ist das Standardverhalten, wenn Sie keinen `path`-Filter angeben.                                                                | `all/the/files.md`                                                                                                       |
+| `'*.js'`                                                                | Das Platzhalterzeichen `*` steht für ein beliebiges Zeichen, nicht jedoch für den Schrägstrich (`/`). Abgleich mit allen `.js`-Dateien im Root des Repositorys.                                                                      | `app.js`<br/><br/>`index.js`                                                                                 |
+| `'**.js'`                                                               | Abgleich mit allen `.js`-Dateien im Repository.                                                                                                                                                                                      | `index.js`<br/><br/>`js/index.js`<br/><br/>`src/js/app.js`                                       |
+| `docs/*`                                                                | Alle Dateien im Root des Verzeichnisses `docs` im Root des Repositorys.                                                                                                                                                              | `docs/README.md`<br/><br/>`docs/file.txt`                                                                    |
+| `docs/**`                                                               | Beliebige Dateien im Verzeichnis `docs` im Root des Repositorys.                                                                                                                                                                     | `docs/README.md`<br/><br/>`docs/mona/octocat.txt`                                                            |
+| `docs/**/*.md`                                                          | Eine Datei mit dem Suffix `.md` an beliebiger Stelle im Verzeichnis `docs`.                                                                                                                                                          | `docs/README.md`<br/><br/>`docs/mona/hello-world.md`<br/><br/>`docs/a/markdown/file.md`          |
+| `'**/docs/**'`                                                          | Beliebige Dateien im Verzeichnis `docs` an beliebiger Stelle im Repository.                                                                                                                                                          | `/docs/hello.md`<br/><br/>`dir/docs/my-file.txt`<br/><br/>`space/docs/plan/space.doc`            |
+| `'**/README.md'`                                                        | Eine Datei mit dem Namen „README.md“ an beliebiger Stelle im Repository.                                                                                                                                                             | `README.md`<br/><br/>`js/README.md`                                                                          |
+| `'**/*src/**'`                                                          | Eine beliebige Datei in einem Ordner mit dem Suffix `src` an beliebiger Stelle im Repository.                                                                                                                                        | `a/src/app.js`<br/><br/>`my-src/code/js/app.js`                                                              |
+| `'**/*-post.md'`                                                        | Eine Datei mit dem Suffix `-post.md` an beliebiger Stelle im Repository.                                                                                                                                                             | `my-post.md`<br/><br/>`path/their-post.md`                                                                   |
+| `'**/migrate-*.sql'`                                                    | Eine Datei mit dem Präfix `migrate-` und dem Suffix `.sql` an beliebiger Stelle im Repository.                                                                                                                                       | `migrate-10909.sql`<br/><br/>`db/migrate-v1.0.sql`<br/><br/>`db/sept/migrate-v1.sql`             |
+| `*.md`<br/><br/>`!README.md`                                | Ein Ausrufezeichen (`!`) vor einem Muster negiert das Muster. Wenn eine Datei sowohl mit einem Muster übereinstimmt als auch mit einem negativen Muster, das später in der Datei definiert ist, wird die Datei nicht berücksichtigt. | `hello.md`<br/><br/>_Does not match_<br/><br/>`README.md`<br/><br/>`docs/hello.md` |
+| `*.md`<br/><br/>`!README.md`<br/><br/>`README*` | Die Muster werden sequenziell geprüft. Wenn ein Muster ein vorangegangenes Muster negiert, werden die Dateipfade wieder berücksichtigt.                                                                                              | `hello.md`<br/><br/>`README.md`<br/><br/>`README.doc`                                            |

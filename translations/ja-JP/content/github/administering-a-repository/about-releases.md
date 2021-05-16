@@ -1,6 +1,6 @@
 ---
 title: リリースについて
-intro: '他の人が使用できるようにソフトウェア、リリースノート、バイナリファイルへのリンクをパッケージしたリリースを作成できます。'
+intro: 他の人が使用できるようにソフトウェア、リリースノート、バイナリファイルへのリンクをパッケージしたリリースを作成できます。
 redirect_from:
   - /articles/downloading-files-from-the-command-line/
   - /articles/downloading-files-with-curl/
@@ -11,6 +11,8 @@ versions:
   free-pro-team: '*'
   enterprise-server: '*'
   github-ae: '*'
+topics:
+  - Repositories
 ---
 
 ### リリースについて
@@ -25,7 +27,7 @@ versions:
 
 リポジトリへの読み取りアクセス権を持つ人はリリースを表示および比較できますが、リリースの管理はリポジトリへの書き込み権限を持つ人のみができます。 詳細は「[リポジトリのリリースを管理する](/github/administering-a-repository/managing-releases-in-a-repository)」を参照してください。
 
-{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@2.22" or currentVersion == "github-ae@latest" %}
+{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@3.0" or currentVersion == "github-ae@latest" %}
 リポジトリへの管理者権限を持つユーザは、
 {% data variables.large_files.product_name_long %} ({% data variables.large_files.product_name_short %}) オブジェクトを {% data variables.product.product_name %} がリリースごとに作成する ZIP ファイルと tarball に含めるかどうかを選択できます。 詳しい情報については、「[リポジトリのアーカイブ内の {% data variables.large_files.product_name_short %} オブジェクトを管理する](/github/administering-a-repository/managing-git-lfs-objects-in-archives-of-your-repository)」を参照してください。
 {% endif %}

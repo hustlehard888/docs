@@ -5,6 +5,8 @@ versions:
   free-pro-team: '*'
   enterprise-server: '>=2.21'
   github-ae: '*'
+topics:
+  - Notifications
 ---
 
 Um Dir zu helfen, Deine Abonnements zu verstehen und zu entscheiden, ob du Dich abmelden sollst, findest Du weitere Informationen auf „[Deine Abonnements ansehen](/github/managing-subscriptions-and-notifications-on-github/viewing-your-subscriptions)."
@@ -39,7 +41,7 @@ Wenn Du Benachrichtigungen in Deinem Posteingang abmeldest, werden diese automat
 
 {% data reusables.notifications.access_notifications %}
 1. Wähle im Posteingang für Benachrichtigungen diejenige Benachrichtigungen aus, die Du abmelden möchtest.
-2. Use the **selected** {% octicon "triangle-down" aria-label="The down triangle icon" %} drop-down to click **Unsubscribe.** ![Option „Unsubscribe" (Abmelden) aus dem Hauptposteingang](/assets/images/help/notifications-v2/unsubscribe-from-main-inbox.png)
+2. Use the **selected** {% octicon "triangle-down" aria-label="The down triangle icon" %} drop-down to click **Unsubscribe.** ![Unsubscribe option from main inbox](/assets/images/help/notifications-v2/unsubscribe-from-main-inbox.png)
 
 ### Abmeldung von Benachrichtigungen auf der Abonnementseite
 

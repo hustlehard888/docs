@@ -1,6 +1,6 @@
 ---
 title: インボックスからの通知を管理する
-intro: 'インボックスを使用して、メール{% if currentVersion == "free-pro-team@latest" %}とモバイル{% endif %}間で通知をすばやくトリアージして同期します。'
+intro: 'インボックスを使用して、メール{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "2.22" %} とモバイル{% endif %} 間で通知をすばやくトリアージして同期します。'
 redirect_from:
   - /articles/marking-notifications-as-read
   - /articles/saving-notifications-for-later
@@ -8,11 +8,17 @@ versions:
   free-pro-team: '*'
   enterprise-server: '>=2.21'
   github-ae: '*'
+topics:
+  - Notifications
 ---
+
+{% if enterpriseServerVersions contains currentVersion %}
+{% data reusables.mobile.ghes-release-phase %}
+{% endif %}
 
 ### インボックスについて
 
-{% if currentVersion == "free-pro-team@latest" %}
+{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "2.22" %}
 {% data reusables.notifications-v2.notifications-inbox-required-setting %} 詳しい情報については、「[通知を設定する](/github/managing-subscriptions-and-notifications-on-github/configuring-notifications#choosing-your-notification-settings)」を参照してください。
 {% endif %}
 
@@ -86,31 +92,16 @@ versions:
 
 ### カスタムフィルタでサポートされているクエリ
 
-使用できるフィルタには、次の 3 種類があります。
+使用できるフィルタの種類は次のとおりです。
   - `repo:` を使用したリポジトリによるフィルタ
   - `is:` を使用したディスカッションタイプによるフィルタ
-  - `reason:` を使用した通知理由によるフィルタ
+  - `reason:` を使用した通知理由でのフィルタ{% if currentVersion == "free-pro-team@latest" %}
+  - `author:` を使用した通知作者によるフィルタ
+  - `org:` を使用したOrganization によるフィルタ{% endif %}
 
-`repo:` フィルタを追加するには、リポジトリの所有者をクエリに含める必要があります。 たとえば、`repo:atom/atom` は、Atom Organization が所有する Atom リポジトリを表します。
+#### サポートされている `repo:` クエリ
 
-#### サポートされている `reason:` クエリ
-
-更新を受信した理由で通知をフィルタするには、`reason:` クエリを使用できます。 たとえば、自分 (または自分が所属する Team) がプルリクエストのレビューをリクエストされたときに通知を表示するには、`reason:review-requested` を使用します。 詳しい情報については、「[通知について](/github/managing-subscriptions-and-notifications-on-github/about-notifications#reasons-for-receiving-notifications)」を参照してください。
-
-| クエリ                       | 説明                                                                                           |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| `reason:assign`           | 割り当てられている Issue またはプルリクエストに更新があるとき。                                                          |
-| `reason:author`           | プルリクエストまたは Issue を開くと、更新または新しいコメントがあったとき。                                                    |
-| `reason:comment`          | Issue、プルリクエスト、または Team ディスカッションにコメントしたとき。                                                    |
-| `reason:participating`    | Issue、プルリクエスト、Team ディスカッションについてコメントしたり、@メンションされているとき。                                        |
-| `reason:invitation`       | Team、Organization、またはリポジトリに招待されたとき。                                                          |
-| `reason:manual`           | まだサブスクライブしていない Issue またはプルリクエストで [**Subscribe**] をクリックしたとき。                                  |
-| `reason:mention`          | 直接@メンションされたとき。                                                                               |
-| `reason:review-requested` | 自分または参加している Team が、プルリクエストを確認するようにリクエストされているとき。{% if currentVersion != "github-ae@latest" %}
-| `reason:security-alert`   | リポジトリに対してセキュリティアラートが発行されたとき。{% endif %}
-| `reason:state-change`     | プルリクエストまたは Issue の状態が変更されたとき。 たとえば、Issue がクローズされたり、プルリクエストがマージされた場合です。                       |
-| `reason:team-mention`     | メンバーになっている Team が@メンションされたとき。                                                                |
-| `reason:ci-activity`      | リポジトリに、新しいワークフロー実行ステータスなどの CI 更新があるとき。                                                       |
+`repo:` フィルタを追加するには、リポジトリの所有者をクエリの `repo:owner/repository` に含める必要があります。 オーナーは、通知をトリガーする {% data variables.product.prodname_dotcom %} アセットを所有する Organization またはユーザです。 例えば、 `repo:octo-org/octo-repo` は、Organization 内の octo-repo リポジトリでトリガーされた通知を表示します。
 
 #### サポートされている `is:` クエリ
 
@@ -138,3 +129,59 @@ versions:
 - `is:done`
 - `is:unread`
 - `is:read`
+
+#### サポートされている `reason:` クエリ
+
+更新を受信した理由で通知をフィルタするには、`reason:` クエリを使用できます。 たとえば、自分 (または自分が所属する Team) がプルリクエストのレビューをリクエストされたときに通知を表示するには、`reason:review-requested` を使用します。 詳しい情報については、「[通知について](/github/managing-subscriptions-and-notifications-on-github/about-notifications#reasons-for-receiving-notifications)」を参照してください。
+
+| クエリ                       | 説明                                                                                           |
+| ------------------------- | -------------------------------------------------------------------------------------------- |
+| `reason:assign`           | 割り当てられている Issue またはプルリクエストに更新があるとき。                                                          |
+| `reason:author`           | プルリクエストまたは Issue を開くと、更新または新しいコメントがあったとき。                                                    |
+| `reason:comment`          | Issue、プルリクエスト、または Team ディスカッションにコメントしたとき。                                                    |
+| `reason:participating`    | Issue、プルリクエスト、Team ディスカッションについてコメントしたり、@メンションされているとき。                                        |
+| `reason:invitation`       | Team、Organization、またはリポジトリに招待されたとき。                                                          |
+| `reason:manual`           | まだサブスクライブしていない Issue またはプルリクエストで [**Subscribe**] をクリックしたとき。                                  |
+| `reason:mention`          | 直接@メンションされたとき。                                                                               |
+| `reason:review-requested` | 自分または参加している Team が、プルリクエストを確認するようにリクエストされているとき。{% if currentVersion != "github-ae@latest" %}
+| `reason:security-alert`   | リポジトリに対してセキュリティアラートが発行されたとき。{% endif %}
+| `reason:state-change`     | プルリクエストまたは Issue の状態が変更されたとき。 たとえば、Issue がクローズされたり、プルリクエストがマージされた場合です。                       |
+| `reason:team-mention`     | メンバーになっている Team が@メンションされたとき。                                                                |
+| `reason:ci-activity`      | リポジトリに、新しいワークフロー実行ステータスなどの CI 更新があるとき。                                                       |
+
+{% if currentVersion == "free-pro-team@latest" %}
+#### サポートされている `author:` クエリ
+
+ユーザごとに通知をフィルタするには、`author:` クエリを使用できます。 作者は、通知されるスレッド（Issue、プルリクエスト、Gist、ディスカッションなど）の元の作者です。 たとえば、Octocat ユーザによって作成されたスレッドの通知を表示するには、`author:octocat` を使用します。
+
+#### サポートされている `org:` クエリ
+
+Organization ごとに通知をフィルタするには、`org:` クエリを使用できます。 クエリで指定する必要のある Organization は、{% data variables.product.prodname_dotcom %} で通知されているリポジトリの Organization です。 このクエリは、複数の Organization に属していて、特定の Organization の通知を表示する場合に便利です。
+
+例えば、octo-org の Organization からの通知を表示するには、 `org:octo-org` を使用します。
+
+{% endif %}
+
+{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@2.21" %}
+### {% data variables.product.prodname_dependabot %}カスタムフィルタ
+
+{% if currentVersion == "free-pro-team@latest" %}
+ー
+{% data variables.product.prodname_dependabot %} を使用して依存関係を最新の状態に保つには、次のカスタムフィルタを使用して保存します。
+- `is:repository_vulnerability_alert` は {% data variables.product.prodname_dependabot_alerts %} の通知を表示します。
+- `reason:security_alert` は {% data variables.product.prodname_dependabot_alerts %} とセキュリティアップデートのプルリクエストの通知を表示します。
+- `author:app/dependabot` は {% data variables.product.prodname_dependabot %} によって生成された通知を表示します。 これには、{% data variables.product.prodname_dependabot_alerts %}、セキュリティアップデートのプルリクエスト、およびバージョン更新のプルリクエストが含まれます。
+ー
+
+{% data variables.product.prodname_dependabot %} の詳細については、「[脆弱性のある依存関係の管理について](/github/managing-security-vulnerabilities/about-managing-vulnerable-dependencies)」を参照してください。
+{% endif %}
+
+{% if enterpriseServerVersions contains currentVersion and currentVersion ver_gt "enterprise-server@2.21" %}
+ー
+{% data variables.product.prodname_dependabot %} を使用して依存関係を最新の状態に保つには、`is:repository_vulnerability_alert` カスタムフィルタを使用して保存し、{% data variables.product.prodname_dependabot_alerts %} の通知を表示できます。
+ー
+
+{% data variables.product.prodname_dependabot %} の詳細については、「[脆弱性のある依存関係のアラートについて](/github/managing-security-vulnerabilities/about-alerts-for-vulnerable-dependencies)」を参照してください。
+{% endif %}
+
+{% endif %}

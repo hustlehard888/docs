@@ -7,6 +7,8 @@ versions:
   free-pro-team: '*'
   enterprise-server: '*'
   github-ae: '*'
+topics:
+  - API
 ---
 
 
@@ -30,13 +32,12 @@ GitHub の GraphQL API についての情報は、[v4 ドキュメント](/graph
 JSON として送受信されます。
 
 ```shell
-$ curl -i {% data variables.product.api_url_pre %}/users/octocat/orgs
+$ curl -I {% data variables.product.api_url_pre %}/users/octocat/orgs
 
 > HTTP/1.1 200 OK
 > Server: nginx
 > Date: Fri, 12 Oct 2012 23:33:14 GMT
 > Content-Type: application/json; charset=utf-8
-> Status: 200 OK
 > ETag: "a00049ba79152d03380c34652f2cb612"
 > X-GitHub-Media-Type: github.v3
 > X-RateLimit-Limit: 5000
@@ -124,12 +125,12 @@ curl -u my_client_id:my_client_secret '{% data variables.product.api_url_pre %}/
 無効な認証情報で認証すると、`401 Unauthorized` が返されます。
 
 ```shell
-$ curl -i {% data variables.product.api_url_pre %} -u foo:bar
+$ curl -I {% data variables.product.api_url_pre %} -u foo:bar
 > HTTP/1.1 401 Unauthorized
 
 > {
 >   "message": "Bad credentials",
->   "documentation_url": "{% data variables.product.doc_url_pre %}/v3"
+>   "documentation_url": "{% data variables.product.doc_url_pre %}"
 > }
 ```
 
@@ -141,7 +142,7 @@ $ curl -i {% data variables.product.api_url_pre %} -u {% if currentVersion == "f
 > HTTP/1.1 403 Forbidden
 > {
 >   "message": "Maximum number of login attempts exceeded. Please try again later.",
->   "documentation_url": "{% data variables.product.doc_url_pre %}/v3"
+>   "documentation_url": "{% data variables.product.doc_url_pre %}"
 > }
 ```
 
@@ -158,7 +159,7 @@ $ curl -i "{% data variables.product.api_url_pre %}/repos/vmg/redcarpet/issues?s
 `POST`、`PATCH`、`PUT`、および `DELETE` リクエストでは、URL に含まれていないパラメータは、Content-Type が「application/json」の JSON としてエンコードする必要があります。
 
 ```shell
-$ curl -i -u username -d '{"scopes":["public_repo"]}' {% data variables.product.api_url_pre %}/authorizations
+$ curl -i -u username -d '{"scopes":["repo_deployment"]}' {% data variables.product.api_url_pre %}/authorizations
 ```
 
 ### ルートエンドポイント
@@ -314,6 +315,8 @@ Basic 認証または OAuth を使用する API リクエストの場合、1 時
 
 {% endif %}
 
+When using the built-in `GITHUB_TOKEN` in GitHub Actions, the rate limit is 1,000 requests per hour per repository. For organizations that belong to a GitHub Enterprise Cloud account, this limit is 15,000 requests per hour per repository.
+
 認証されていないリクエストでは、レート制限により 1 時間あたり最大 60 リクエストまで可能です。 認証されていないリクエストは、リクエストを行っているユーザではなく、発信元の IP アドレスに関連付けられます。
 
 {% data reusables.enterprise.rate_limit %}
@@ -323,10 +326,9 @@ Basic 認証または OAuth を使用する API リクエストの場合、1 時
 API リクエストの返された HTTP ヘッダは、現在のレート制限ステータスを示しています。
 
 ```shell
-$ curl -i {% data variables.product.api_url_pre %}/users/octocat
+$ curl -I {% data variables.product.api_url_pre %}/users/octocat
 > HTTP/1.1 200 OK
 > Date: Mon, 01 Jul 2013 17:27:06 GMT
-> Status: 200 OK
 > X-RateLimit-Limit: 60
 > X-RateLimit-Remaining: 56
 > X-RateLimit-Reset: 1372700873
@@ -350,14 +352,13 @@ new Date(1372700873 * 1000)
 ```shell
 > HTTP/1.1 403 Forbidden
 > Date: Tue, 20 Aug 2013 14:50:41 GMT
-> Status: 403 Forbidden
 > X-RateLimit-Limit: 60
 > X-RateLimit-Remaining: 0
 > X-RateLimit-Reset: 1377013266
 
 > {
 >    "message": "API rate limit exceeded for xxx.xxx.xxx.xxx. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)",
->    "documentation_url": "{% data variables.product.doc_url_pre %}/v3/#rate-limiting"
+>    "documentation_url": "{% data variables.product.doc_url_pre %}/overview/resources-in-the-rest-api#rate-limiting"
 > }
 ```
 
@@ -371,7 +372,6 @@ OAuth アプリケーションが認証されていない呼び出しをより�
 $ curl -u my_client_id:my_client_secret {% data variables.product.api_url_pre %}/user/repos
 > HTTP/1.1 200 OK
 > Date: Mon, 01 Jul 2013 17:27:06 GMT
-> Status: 200 OK
 > X-RateLimit-Limit: 5000
 > X-RateLimit-Remaining: 4966
 > X-RateLimit-Reset: 1372700873
@@ -402,7 +402,7 @@ Basic 認証または OAuth を使用してレート制限を超えた場合、A
 
 > {
 >   "message": "You have triggered an abuse detection mechanism and have been temporarily blocked from content creation. Please retry your request again later.",
->   "documentation_url": "{% data variables.product.doc_url_pre %}/v3/#abuse-rate-limits"
+>   "documentation_url": "{% data variables.product.doc_url_pre %}/overview/resources-in-the-rest-api#abuse-rate-limits"
 > }
 ```
 
@@ -421,7 +421,7 @@ User-Agent: Awesome-Octocat-App
 cURL はデフォルトで有効な `User-Agent` ヘッダを送信します。 cURL（または代替クライアント）を介して無効な `User-Agent` ヘッダを提供すると、`403 Forbidden` レスポンスが返されます。
 
 ```shell
-$ curl -iH 'User-Agent: ' {% data variables.product.api_url_pre %}/meta
+$ curl -IH 'User-Agent: ' {% data variables.product.api_url_pre %}/meta
 > HTTP/1.0 403 Forbidden
 > Connection: close
 > Content-Type: text/html
@@ -448,33 +448,30 @@ $ curl -iH 'User-Agent: ' {% data variables.product.api_url_pre %}/meta
 {% endif %}
 
 ```shell
-$ curl -i {% data variables.product.api_url_pre %}/user
+$ curl -I {% data variables.product.api_url_pre %}/user
 > HTTP/1.1 200 OK
 > Cache-Control: private, max-age=60
 > ETag: "644b5b0155e6404a9cc4bd9d8b1ae730"
 > Last-Modified: Thu, 05 Jul 2012 15:31:30 GMT
-> Status: 200 OK
 > Vary: Accept, Authorization, Cookie
 > X-RateLimit-Limit: 5000
 > X-RateLimit-Remaining: 4996
 > X-RateLimit-Reset: 1372700873
 
-$ curl -i {% data variables.product.api_url_pre %}/user -H 'If-None-Match: "644b5b0155e6404a9cc4bd9d8b1ae730"'
+$ curl -I {% data variables.product.api_url_pre %}/user -H 'If-None-Match: "644b5b0155e6404a9cc4bd9d8b1ae730"'
 > HTTP/1.1 304 Not Modified
 > Cache-Control: private, max-age=60
 > ETag: "644b5b0155e6404a9cc4bd9d8b1ae730"
 > Last-Modified: Thu, 05 Jul 2012 15:31:30 GMT
-> Status: 304 Not Modified
 > Vary: Accept, Authorization, Cookie
 > X-RateLimit-Limit: 5000
 > X-RateLimit-Remaining: 4996
 > X-RateLimit-Reset: 1372700873
 
-$ curl -i {% data variables.product.api_url_pre %}/user -H "If-Modified-Since: Thu, 05 Jul 2012 15:31:30 GMT"
+$ curl -I {% data variables.product.api_url_pre %}/user -H "If-Modified-Since: Thu, 05 Jul 2012 15:31:30 GMT"
 > HTTP/1.1 304 Not Modified
 > Cache-Control: private, max-age=60
 > Last-Modified: Thu, 05 Jul 2012 15:31:30 GMT
-> Status: 304 Not Modified
 > Vary: Accept, Authorization, Cookie
 > X-RateLimit-Limit: 5000
 > X-RateLimit-Remaining: 4996
@@ -488,7 +485,7 @@ API は、任意のオリジンからの AJAX リクエストに対して、オ�
 `http://example.com` にアクセスするブラウザから送信されたサンプルリクエストは次のとおりです。
 
 ```shell
-$ curl -i {% data variables.product.api_url_pre %} -H "Origin: http://example.com"
+$ curl -I {% data variables.product.api_url_pre %} -H "Origin: http://example.com"
 HTTP/1.1 302 Found
 Access-Control-Allow-Origin: *
 Access-Control-Expose-Headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
@@ -497,7 +494,7 @@ Access-Control-Expose-Headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-Ra
 CORS プリフライトリクエストは次のようになります。
 
 ```shell
-$ curl -i {% data variables.product.api_url_pre %} -H "Origin: http://example.com" -X OPTIONS
+$ curl -I {% data variables.product.api_url_pre %} -H "Origin: http://example.com" -X OPTIONS
 HTTP/1.1 204 No Content
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Headers: Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-GitHub-OTP, X-Requested-With
